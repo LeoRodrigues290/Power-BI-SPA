@@ -35,10 +35,6 @@ export const Dashboard = () => {
                             <p className="text-blue-200/70 text-sm font-medium">Projetos Ativos</p>
                             <h3 className="text-4xl font-bold text-white mt-2">{totalProjects}</h3>
                         </div>
-                        <div className="mt-4 flex items-center gap-2 text-xs text-blue-300/50">
-                            <span className="bg-green-500/20 text-green-300 px-2 py-0.5 rounded-full">+12%</span>
-                            vs. mês passado
-                        </div>
                     </div>
 
                     <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden group hover:bg-white/10 transition-colors">
@@ -49,10 +45,6 @@ export const Dashboard = () => {
                             <p className="text-blue-200/70 text-sm font-medium">Falhas Identificadas</p>
                             <h3 className="text-4xl font-bold text-white mt-2">{totalFailures}</h3>
                         </div>
-                        <div className="mt-4 flex items-center gap-2 text-xs text-blue-300/50">
-                            <span className="bg-red-500/20 text-red-300 px-2 py-0.5 rounded-full">+5%</span>
-                            vs. mês passado
-                        </div>
                     </div>
 
                     <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden group hover:bg-white/10 transition-colors">
@@ -62,10 +54,6 @@ export const Dashboard = () => {
                         <div>
                             <p className="text-blue-200/70 text-sm font-medium">Usuários Totais</p>
                             <h3 className="text-4xl font-bold text-white mt-2">{usersCount}</h3>
-                        </div>
-                        <div className="mt-4 flex items-center gap-2 text-xs text-blue-300/50">
-                            <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
-                            Sistema online
                         </div>
                     </div>
                 </div>

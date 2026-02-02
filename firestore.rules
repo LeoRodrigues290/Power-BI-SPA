@@ -1,0 +1,42 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Função auxiliar para verificar o papel
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function isAdmin() {
+      return getUserData().role == 'admin';
+    }
+
+    function isManager() {
+      return getUserData().role == 'manager';
+    }
+
+    // Regras para USUÁRIOS
+    match /users/{userId} {
+      // Qualquer um logado pode ler seu próprio perfil para saber suas permissões
+      allow read: if request.auth != null && request.auth.uid == userId;
+      // Somente Admin pode ler outros perfis e criar/editar usuários
+      allow read, write: if request.auth != null && isAdmin();
+    }
+
+    // Regras para PROJETOS
+    match /projects/{projectId} {
+      // Leitura: Admin, ou se tiver 'accessAll', ou se o ID estiver na lista permitida
+      allow read: if request.auth != null && (
+        isAdmin() || 
+        getUserData().accessAll == true ||
+        projectId in getUserData().allowedProjects
+      );
+      
+      // Escrita/Criação: Apenas Admin ou Gerente
+      allow write: if request.auth != null && (isAdmin() || isManager());
+       
+      // Allow delete functionality
+      allow delete: if request.auth != null && (isAdmin() || isManager());
+    }
+  }
+}

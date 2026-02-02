@@ -150,7 +150,13 @@ export const ProjectList = () => {
                                         <div className="flex items-center gap-4 mt-1 text-sm text-slate-400">
                                             <span className="flex items-center gap-1.5">
                                                 <Calendar size={14} />
-                                                {project.createdAt?.toDate().toLocaleDateString('pt-BR')}
+                                                <Calendar size={14} />
+                                                {(() => {
+                                                    const d = project.createdAt as any;
+                                                    if (!d) return "";
+                                                    if (d.seconds) return new Date(d.seconds * 1000).toLocaleDateString("pt-BR");
+                                                    return new Date(d).toLocaleDateString("pt-BR");
+                                                })()}
                                             </span>
                                             <span className="flex items-center gap-1.5">
                                                 <div className="w-1.5 h-1.5 rounded-full bg-red-400" />

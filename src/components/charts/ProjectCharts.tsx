@@ -60,7 +60,7 @@ export const ProjectCharts = ({ data }: { data: SheetData[] }) => {
                         </div>
 
                         {/* Chart Section - Top 10 Only */}
-                        <div className="h-[350px] w-full mb-8">
+                        <div className="h-[350px] w-full mb-8 min-w-0">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart layout="vertical" data={top10} margin={{ left: 10, right: 10, top: 0, bottom: 0 }} barGap={2} barCategoryGap="20%">
                                     <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={true} stroke="#1e293b" opacity={0.3} />

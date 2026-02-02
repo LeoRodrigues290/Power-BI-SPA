@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { AuthProvider } from "@/contexts/AuthProvider";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Login } from "@/pages/Login";
 import { Dashboard } from "@/pages/Dashboard";
 import { ProjectList } from "@/pages/projects/ProjectList";
@@ -16,13 +17,15 @@ function App() {
           <Route path="/login" element={<Login />} />
 
           {/* Protected Routes */}
-          <Route path="/" element={<AppLayout />}>
-            <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="projects" element={<ProjectList />} />
-            <Route path="projects/new" element={<NewProject />} />
-            <Route path="projects/:id" element={<ProjectDetail />} />
-            <Route path="users" element={<UserList />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<AppLayout />}>
+              <Route index element={<Navigate to="/dashboard" replace />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="projects" element={<ProjectList />} />
+              <Route path="projects/new" element={<NewProject />} />
+              <Route path="projects/:id" element={<ProjectDetail />} />
+              <Route path="users" element={<UserList />} />
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>

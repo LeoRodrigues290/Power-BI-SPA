@@ -110,22 +110,22 @@ export const useDataStore = create<DataState>()(
             tFailures: sum('totalFailures')
           });
 
-          // Mock user count or fetch if needed
-          // const userCountSnap = await getCountFromServer(collection(db, 'users')); 
-          // set userCount = userCountSnap.data().count
+          // Fetch real user count
+          const userCountSnap = await getAggregateFromServer(collection(db, 'users'), {
+            count: count()
+          });
 
           set({
             stats: {
               totalProjects: snapshot.data().count,
               totalFailures: snapshot.data().tFailures,
-              usersCount: 5 // Mock for now or restricted
+              usersCount: userCountSnap.data().count
             },
             lastStatsFetch: now
           });
         } catch (error) {
           console.error("Error fetching stats:", error);
-          // Fallback to local calculation if aggregation fails (e.g., requires index creation)
-          // or just keep old stats
+          // Keep old stats on error, or maybe set error state
         }
       },
 
@@ -147,7 +147,7 @@ export const useDataStore = create<DataState>()(
       },
     }),
     {
-      name: 'inkybi-data-storage',
+      name: 'inkybi-data-storage-v2', // Invalidating cache to force fresh stats
       partialize: (state) => ({
         projects: state.projects,
         lastProjectsFetch: state.lastProjectsFetch,
