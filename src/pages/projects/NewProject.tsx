@@ -7,9 +7,12 @@ import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useAuthStore } from "@/store/useAuthStore";
 
+import { useDataStore } from "@/store/useDataStore";
+
 export const NewProject = () => {
     const navigate = useNavigate();
     const { user } = useAuthStore();
+    const { fetchProjects } = useDataStore();
     const [projectName, setProjectName] = useState("");
     const [data, setData] = useState<ProcessedProjectData | null>(null);
     const [loading, setLoading] = useState(false);
@@ -52,6 +55,10 @@ export const NewProject = () => {
                 sheets: data.sheets, // Saving the full JSON structure
                 // If data is too large (>1MB), we would need to sub-collect it, but starting simple as per plan.
             });
+
+            // Force refresh cache
+            await fetchProjects(true);
+
             navigate("/projects");
         } catch (err) {
             console.error("Error saving project:", err);

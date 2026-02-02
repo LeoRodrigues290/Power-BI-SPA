@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { Loader2, Shield, User, Search, Save, X } from "lucide-react";
+import { Loader2, Shield, User, Save, X } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { cn } from "@/lib/utils";
 
@@ -11,6 +11,7 @@ interface UserProfile {
     name: string;
     role: 'admin' | 'manager' | 'analyst';
     accessAll: boolean;
+    allowedProjects?: string[];
 }
 
 export const UserList = () => {
@@ -42,7 +43,12 @@ export const UserList = () => {
 
     const handleEdit = (user: UserProfile) => {
         setEditingId(user.id);
-        setEditForm({ role: user.role, accessAll: user.accessAll });
+        setEditForm({
+            name: user.name,
+            role: user.role,
+            accessAll: user.accessAll,
+            allowedProjects: user.allowedProjects || []
+        });
     };
 
     const handleCancel = () => {
@@ -54,8 +60,10 @@ export const UserList = () => {
         try {
             const userRef = doc(db, "users", id);
             await updateDoc(userRef, {
+                name: editForm.name,
                 role: editForm.role,
-                accessAll: editForm.accessAll
+                accessAll: editForm.accessAll,
+                allowedProjects: editForm.allowedProjects || []
             });
 
             // Optimistic update
@@ -141,18 +149,42 @@ export const UserList = () => {
                                         </td>
                                         <td className="p-6">
                                             {editingId === user.id ? (
+                                                <div className="space-y-2">
+                                                    <input
+                                                        type="text"
+                                                        value={editForm.name || ""}
+                                                        onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                                                        className="bg-slate-800 text-white border border-white/20 rounded-lg px-2 py-1 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        placeholder="Nome do usuário"
+                                                    />
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={editForm.accessAll || false}
+                                                        onChange={(e) => setEditForm({ ...editForm, accessAll: e.target.checked })}
+                                                        className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-2"
+                                                        id={`access-${user.id}`}
+                                                    />
+                                                    <label htmlFor={`access-${user.id}`} className="text-sm text-slate-300">Acesso Global</label>
+
+                                                    {!editForm.accessAll && (
+                                                        <textarea
+                                                            className="w-full bg-slate-800 border border-white/20 rounded p-1 text-xs text-slate-300"
+                                                            placeholder="IDs dos projetos (separados por vírgula)"
+                                                            value={editForm.allowedProjects?.join(',') || ''}
+                                                            onChange={(e) => setEditForm({
+                                                                ...editForm,
+                                                                allowedProjects: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                                                            })}
+                                                        />
+                                                    )}
+                                                </div>
+                                            ) : (
                                                 <input
                                                     type="checkbox"
-                                                    checked={editForm.accessAll || false}
-                                                    onChange={(e) => setEditForm({ ...editForm, accessAll: e.target.checked })}
-                                                    className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                    checked={user.accessAll || false}
+                                                    disabled
+                                                    className="w-4 h-4 rounded border-gray-300 text-blue-600 opacity-50 cursor-not-allowed"
                                                 />
-                                            ) : (
-                                                user.accessAll ? (
-                                                    <span className="text-green-400 text-sm font-medium">Sim</span>
-                                                ) : (
-                                                    <span className="text-white/40 text-sm">Não</span>
-                                                )
                                             )}
                                         </td>
                                         <td className="p-6 text-right">
